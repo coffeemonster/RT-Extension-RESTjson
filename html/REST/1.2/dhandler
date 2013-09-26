@@ -200,11 +200,11 @@
             ($type, $id, $attr, $args) = ($1, $2, ($3 || 'default'), $4);
 
 
-            $handler = "Forms/$type/$attr";
+            $handler = "/REST/1.0/Forms/$type/$attr";
 
             unless ($m->comp_exists($handler)) {
                 $args = defined $args ? "$attr/$args" : $attr;
-                $handler = "Forms/$type/default";
+                $handler = "/REST/1.0/Forms/$type/default";
 
                 unless ($m->comp_exists($handler)) {
                     $i = 2;
@@ -212,7 +212,7 @@
                 }
             }
             elsif ($id ne 'new' && $id !~ /^\d+$/) {
-                my $ns = "Forms/$type/ns";
+                my $ns = "/REST/1.0/Forms/$type/ns";
 
                 # Can we resolve named objects?
                 unless ($m->comp_exists($ns)) {
@@ -220,7 +220,7 @@
                     $c = "# Objects of type $type must be specified by numeric id.";
                 }
                 else {
-                    my ($n, $s) = $m->comp("Forms/$type/ns", id => $id);
+                    my ($n, $s) = $m->comp("/REST/1.0/Forms/$type/ns", id => $id);
                     if ($n <= 0) { $i = 4; $c = "# $s"; }
                     else         { $i = 0; $id = $n;    }
                 }
