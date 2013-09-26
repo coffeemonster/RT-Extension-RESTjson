@@ -14,10 +14,10 @@ our $VERSION = "1.0";
 
     Todo: POST (and the error handling for them)
 
-    Note: v1.2 incase RT comes out with a 1.1
+    Note: v1.2 in case BestPractical comes out with a 1.1
 
 =head1 AUTHOR
 
-    alisterwest.com
+    Alister West <https://alisterwest.com>
 
 =cut
