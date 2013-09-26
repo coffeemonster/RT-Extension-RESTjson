@@ -1,0 +1,11 @@
+%# REST/1.0/search/dhandler
+<%INIT>
+    use JSON;
+    my %data = (
+        version => "RT/$RT::VERSION",
+        status => "500 Server Error",
+        error => "Unsupported object type.",
+    );
+    $r->content_type('application/json');
+    $m->out( to_json \%data );
+</%INIT>

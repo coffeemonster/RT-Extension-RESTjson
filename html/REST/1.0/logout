@@ -1,0 +1,9 @@
+<%PERL>
+    use JSON;
+    if (keys %session) {
+        RT::Interface::Web::InstantiateNewSession();
+        $session{CurrentUser} = RT::CurrentUser->new();
+    }
+    $r->content_type('application/json');
+    $m->out( to_json { version => "RT/$RT::VERSION", status => "200 Ok" } );
+</%PERL>

@@ -1,0 +1,106 @@
+%# REST/1.5/search/ticket - just like 1.0 but with json output.
+%#
+<%ARGS>
+    $query
+    $format  => undef
+    $orderby => undef
+    $fields  => undef
+</%ARGS>
+<%INIT>
+    use JSON ();
+    use RT::Interface::REST;
+    my %data = (
+        version => "RT/$RT::VERSION",
+        status  => "200 OK",
+    );
+    my $tickets = RT::Tickets->new($session{CurrentUser});
+
+    # Parse and validate any field specifications.
+    my $field  = RT::Interface::REST->field_spec;
+    my (%fields, @fields);
+    if ($fields) {
+        $format ||= "l";
+        unless ($fields =~ /^(?:$field,)*$field$/) {
+            $data{status} = "400 Bad Request";
+            $data{error}  = "Invalid field specification: $fields";
+            goto OUTPUT;
+        }
+        @fields = map lc, split /\s*,\s*/, $fields;
+        @fields{@fields} = ();
+        unless (exists $fields{id}) {
+            unshift @fields, "id";
+            $fields{id} = ();
+        }
+    }
+
+    $format ||= "s";
+    if ($format !~ /^[isl]$/) {
+        $data{status} = "400 Bad request";
+        $data{error}  = "Unknown listing format: $format. (Use i, s, or l.)\n";
+        goto OUTPUT;
+    }
+
+    my ($n, $s);
+    eval {
+        ($n, $s) = $tickets->FromSQL($query);
+    };
+
+    if ($orderby) {
+        my %args;
+
+        my $order = substr($orderby, 0, 1);
+        if ($order eq '+' || $order eq '-') {
+            # remove the +/- sorting sigil
+            substr($orderby, 0, 1, '');
+
+            if ($order eq '+') {
+                $args{ORDER} = 'ASC';
+            }
+            elsif ($order eq '-') {
+                $args{ORDER} = 'DESC';
+            }
+        }
+
+        $tickets->OrderBy(
+            FIELD => $orderby,
+            %args,
+        );
+    }
+
+    if ($@ || $n == 0) {
+        $s ||= $@;
+        $data{status} = "400 Bad request";
+        $data{error}  = "Invalid query: '$s'.\n";
+        goto OUTPUT;
+    }
+
+    $n = 0;
+    my @output;
+    while (my $ticket = $tickets->Next) {
+        $n++;
+
+        my $id = $ticket->Id;
+        if ($format eq "i") {
+            push @output, { id => $id };
+        }
+        elsif ($format eq "s" && !$fields) {
+            push @output, { id => $id, Subject => $ticket->Subject };
+        }
+        else {
+            my $result = $m->comp("/REST/1.0/Forms/ticket/default", id => $id, format => $format, fields => \%fields);
+            my ($c, $o, $k, $e) = @$result;
+            $k->{'id'} = $id;
+            push @output, $k;
+        }
+    }
+    if ($n == 0 && $format ne "i") {
+        $data{info} = "No matching results.\n";
+    }
+
+    $data{tickets} = \@output;
+
+    OUTPUT:
+    $r->content_type('application/json');
+    $m->out( JSON::to_json \%data );
+    return;
+</%INIT>
