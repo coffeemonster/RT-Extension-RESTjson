@@ -8,6 +8,7 @@ our $VERSION = "1.0";
 =head1 SYNOPSIS
 
     The following interfaces have been redefined to make responses easier parse:
+    Note: /1.2/ instead of RT's /1.0/ to avoid breaking things.
 
         GET /REST/1.2/search/ticket/
         GET /REST/1.2/ticket/nn/
@@ -57,7 +58,21 @@ our $VERSION = "1.0";
 
     Alister West <https://alisterwest.com>
 
-    Todo: POST (and the error handling for them)
-    Note: v1.2 in case BestPractical comes out with a 1.1
+
+=head1 LICENSE AND COPYRIGHT
+
+    Copyright 2012 Alister West, C<< <alister at alisterwest.com> >>
+
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of either: the GNU General Public License as published by the Free
+    Software Foundation; or the Artistic License.
+
+    See http://dev.perl.org/licenses/ for more information.
+
+
+=head1 CHANGES
+
+1.0  2013-09-26
+    - created project to override responses from RT's REST interface
 
 =cut
