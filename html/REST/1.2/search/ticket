@@ -97,7 +97,7 @@
         $data{info} = "No matching results.\n";
     }
 
-    $data{tickets} = \@output;
+    $data{objects} = \@output;
 
     OUTPUT:
     $r->content_type('application/json');

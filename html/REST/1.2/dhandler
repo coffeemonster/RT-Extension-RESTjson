@@ -13,7 +13,7 @@
     my %data = (
         version => "RT/".$RT::VERSION,
         status => "200 Ok",
-        tickets => [],
+        objects => [],
     );
     my $object = $m->dhandler_arg;
 
@@ -285,7 +285,7 @@
 
     for (@output) { $_->{id} =~ s/\D//g; }
     $data{comments} = \@comments if @comments;
-    $data{tickets} = \@output;
+    $data{objects} = \@output;
 
     OUTPUT:
     $r->content_type("application/json");
