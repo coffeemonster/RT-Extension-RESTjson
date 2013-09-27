@@ -34,10 +34,10 @@ our $VERSION = "1.0";
     GET /REST/1.2/search/ticket?query=Requestor.EmailAddress%20LIKE%20"alister@example.com";fields=id,Subject,Created
     <object> : { "id" : "11", "Subject" : "My Test Ticket!", "Created" : "Wed May 29 21:08:58 2013" }
 
-    GET /REST/1.2/ticket/123/
+    GET /REST/1.2/ticket/11/
     <object> : { "id" : "185", "object" : "ticket/11", "Subject" : "My Subject"  .. }
 
-    GET /REST/1.2/ticket/123/attachments
+    GET /REST/1.2/ticket/11/attachments
     <object> :  "id" : "185",
                 "object" : "ticket/11",
                 "Attachments" : [
@@ -46,7 +46,7 @@ our $VERSION = "1.0";
                     "185: #5778.pdf (application/pdf / 112.2k)"
                 ]
 
-    GET /REST/1.2/ticket/123/attachments/185 
+    GET /REST/1.2/ticket/11/attachments/185 
     <object> :  "id" : "185",
                 "object" : "ticket/11/attachments/185",
                 "Headers" : "Subject: first post!\n...",
