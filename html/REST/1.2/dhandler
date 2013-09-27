@@ -254,7 +254,7 @@
                 }
             }
             # push(@output, [ $c, $o, $k ]) if ($c || @$o || keys %$k);
-            $k = { history => $k } if $attr eq 'history';
+            $k = { History => $k } if $attr eq 'history';
             
             push @output, { %ticket, %$k };
         }
@@ -283,7 +283,7 @@
         }
     }
 
-    for (@output) { $_->{id} =~ s/\D//g; }
+    for (@output) { $_->{id} =~ s/[^\d]*?(\d+).*/$1/; }
     $data{comments} = \@comments if @comments;
     $data{objects} = \@output;
 
