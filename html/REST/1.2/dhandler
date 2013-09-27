@@ -34,6 +34,14 @@
 #    http://.../REST/1.0/ticket/nn/comment
 #    http://.../REST/1.0/ticket/nn/attachment/1
 #
+# v1.2 defines the following (as nn doesn't get expanded in 1.0)
+#
+# 5. http://.../REST/1.2/ticket/11,14/show
+#    http://.../REST/1.2/ticket/11,14/history/show
+#    http://.../REST/1.2/ticket/11/history/id/166,270/show
+
+
+#
 # Objects are specified by their type, and either a unique numeric ID,
 # or a unique name (e.g. ticket/1, queue/foo). Multiple objects of the
 # same type may be specified by a comma-separated list of identifiers
@@ -46,7 +54,27 @@
     my (@objects, $forms);
     my $utype;
 
-    if ($object eq 'show' ||                                # $REST/show
+
+
+
+    #
+    # $REST/ticket/11,14/show
+    # $REST/ticket/11,14/history/show
+    #
+    if ( $object =~ m{^(ticket)/([\d,-]+)(?:/(\w+))?/show$} ) {
+        my ($type, $oids, $attr) = ($1, $2, $3);
+        push @objects, ($attr ? "$type/$_/$attr/" : "$type/$_" ) for expand_list( $oids );
+    }
+    #
+    # $REST/ticket/11/history/id/166,270/show
+    #
+    elsif ( $object =~ m{^(ticket)/(\d+)/(\w+)/id/([\d,-]+)/show$} ) {
+        my ($type, $oids, $attr, $tids) = ($1, $2, $3, $4);
+        for my $oid ( expand_list($oids) ) {
+            push(@objects, "$type/$oid/$attr/id/$_") for expand_list( $tids );
+        }
+    }
+    elsif ($object eq 'show' ||                             # $REST/show
         (($utype) = ($object =~ m{^($name)/show$})))        # $REST/ticket/show
     {
         # We'll convert type/range specifications ("ticket/1-3,7-9/history")
