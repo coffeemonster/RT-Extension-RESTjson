@@ -8,6 +8,7 @@
 </%ARGS>
 <%INIT>
     use JSON;
+    use MIME::Base64;
     use RT::Interface::REST;
 
     my %data = (
@@ -53,8 +54,6 @@
 #
     my (@objects, $forms);
     my $utype;
-
-
 
 
     #
@@ -314,6 +313,14 @@
     for (@output) { $_->{id} =~ s/[^\d]*?(\d+).*/$1/; }
     $data{comments} = \@comments if @comments;
     $data{objects} = \@output;
+
+    # We don't want to send binary data over JSON so we base64 encode attachments here.
+    for (@{ $data{objects} }) {
+        if ($_->{ContentEncoding} && $_->{ContentEncoding} eq 'none') {
+            $_->{ContentEncoding} = 'base64';
+            $_->{Content} = encode_base64( $_->{Content} );
+        }
+    }
 
     OUTPUT:
     $r->content_type("application/json");
