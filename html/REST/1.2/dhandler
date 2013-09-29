@@ -280,9 +280,6 @@
                     delete $k->{$key} unless exists $fields{lc $key};
                 }
             }
-            # push(@output, [ $c, $o, $k ]) if ($c || @$o || keys %$k);
-            $k = { History => $k } if $attr eq 'history';
-            
             push @output, { %ticket, %$k };
         }
         else {
